@@ -149,7 +149,7 @@ then
 fi
 
 
-debootstrap --arch=amd64 --include=bash-completion,nano,sudo,nmap,zlib1g-dev,libssl-dev,zip,unzip,git,strace,ltrace,curl,build-essential,conntrack,ipset,tcpdump,openssh-server ${CODENAME} images/${OS}/${CODENAME} ${URI}
+debootstrap --arch=amd64 --variant=minbase --include=bash-completion,nano,sudo,nmap,zlib1g-dev,libssl-dev,zip,unzip,git,strace,ltrace,curl,build-essential,conntrack,ipset,tcpdump,openssh-server ${CODENAME} images/${OS}/${CODENAME} ${URI}
 #debootstrap --arch=amd64 --include=bash-completion,nano,sudo,nmap,zlib1g-dev,libssl-dev,zip,unzip,git,strace,ltrace,curl ${CODENAME} images/${OS}/${CODENAME} ${URI}
 #debootstrap --arch=amd64 ${CODENAME} images/${OS}/${CODENAME} ${URI}
 

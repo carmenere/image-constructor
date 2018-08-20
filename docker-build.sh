@@ -126,11 +126,10 @@ RUN service ssh start
 RUN sed -i '\/etc\/bash_completion/s/^#//'  /root/.bashrc && \
     sed -i '/\. \/etc\/bash_completion/afi' /root/.bashrc
 
-RUN sed -i '/PermitRootLogin/cPermitRootLogin yes' /etc/ssh/sshd_config
+RUN sed -i '/PermitRootLogin/cPermitRootLogin no' /etc/ssh/sshd_config
 
-#RUN useradd -p $(openssl passwd -1 1) -m -G sudo blackswan
-
-ENTRYPOINT ["/usr/sbin/sshd", "-D"]
+ENTRYPOINT ["/bin/bash"]
+#ENTRYPOINT ["/usr/sbin/sshd", "-D"]
 
 EOF
 

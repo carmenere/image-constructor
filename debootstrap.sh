@@ -49,10 +49,10 @@ then
     echo "ERROR: No arguments supplied!"
     echo ""
     echo "Usage: ${0##*/} OS release_codename base_image_tag"
-    continue_with_defaults "OS=ubuntu, release_codename=xenial, tag=ubuntu/xenial:16.04"
+    continue_with_defaults "OS=ubuntu, release_codename=bionic, tag=ubuntu/bionic:18.04"
     OS="ubuntu"
-    CODENAME="xenial"
-    TAG="ubuntu/xenial:16.04"
+    CODENAME="bionic"
+    TAG="ubuntu/bionic:18.04"
     URI="http://archive.ubuntu.com/ubuntu/"
     APT_URI="http://ru.archive.ubuntu.com/ubuntu/"
 elif [[ $# -ne 3 ]]
@@ -60,10 +60,10 @@ then
     echo "ERROR: Incorrect arguments value supplied!"
     echo ""
     echo "Usage: ${0##*/} OS release_codename base_image_tag"
-    continue_with_defaults "OS=ubuntu, release_codename=xenial, tag=ubuntu/xenial:16.04"
+    continue_with_defaults "OS=ubuntu, release_codename=bionic, tag=ubuntu/bionic:18.04"
     OS="ubuntu"
-    CODENAME="xenial"
-    TAG="ubuntu/xenial:16.04"
+    CODENAME="bionic"
+    TAG="ubuntu/bionic:18.04"
     URI="http://archive.ubuntu.com/ubuntu/"
     APT_URI="http://ru.archive.ubuntu.com/ubuntu/"
 else
@@ -106,18 +106,14 @@ else
 
     *)
         echo "Argument release_codename has incorrect vlue!"
-        continue_with_defaults "release_codename=xenial"
-        CODENAME="xenial"
+        continue_with_defaults "release_codename=bionic"
+        CODENAME="bionic"
   esac
 
   if [[ -n "$3" ]]; then
       TAG=$3
   else
-      TAG="ubuntu/xenial:16.04"
-  fi
-
-  if [[ -n "$4" ]]; then
-      TAG2=$4
+      TAG="ubuntu/bionic:18.04"
   fi
 
 fi

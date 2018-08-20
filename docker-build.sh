@@ -13,7 +13,7 @@ if [[ $# -eq 0 ]]
 then
     echo "ERROR: No arguments supplied!"
     echo ""
-    echo "Usage: ${0##*/} FROM_image_tag NEW_image_tag"
+    echo "Usage: ${0##*/} SOURCE_IMAGE_tag TARGET_IMAGE_tag"
     continue_with_defaults "ubuntu/bionic:18.04-minbase polygon:initial"
     TAG="ubuntu/bionic:18.04-minbase"
     TAG2="polygon:initial"
@@ -22,22 +22,22 @@ elif [[ $# -ne 2 ]]
 then
     echo "ERROR: Incorrect arguments value supplied!"
     echo ""
-    echo "Usage: ${0##*/} FROM_image_tag NEW_image_tag"
+    echo "Usage: ${0##*/} SOURCE_IMAGE_tag TARGET_IMAGE_tag"
     continue_with_defaults "ubuntu/bionic:18.04-minbase polygon:initial"
     TAG="ubuntu/bionic:18.04-minbase"
     TAG2="polygon:initial"
 
 else
   if [[ -n "$1" ]]; then
-      TAG=$1
+      SOURCE_TAG=$1
   else
-      TAG="ubuntu/bionic:18.04-minbase"
+      SOURCE_TAG="ubuntu/bionic:18.04-minbase"
   fi
 
   if [[ -n "$2" ]]; then
-      TAG2=$2
+      TARGET_TAG=$2
   else
-      TAG2="polygon:initial"
+      TARGET_TAG="polygon:initial"
   fi
 fi
 
@@ -51,7 +51,7 @@ mkdir -p /tmp/docker-build
 truncate -s 0 /tmp/docker-build/Dockerfile
 
 cat <<EOF > /tmp/docker-build/Dockerfile
-FROM ${TAG}
+FROM ${SOURCE_TAG}
 
 ARG TERM=xterm-256color
 ARG DEBIAN_FRONTEND=noninteractive
@@ -134,7 +134,7 @@ ENTRYPOINT ["/bin/bash"]
 EOF
 
 
-docker build --no-cache -f /tmp/docker-build/Dockerfile /tmp --tag "${TAG2}"
+docker build --no-cache -f /tmp/docker-build/Dockerfile /tmp --tag "${TARGET_TAG}"
 
 
 rm -rf /tmp/docker-build

@@ -15,8 +15,8 @@ then
     echo ""
     echo "Usage: ${0##*/} SOURCE_IMAGE_tag TARGET_IMAGE_tag"
     continue_with_defaults "ubuntu/bionic:18.04-minbase polygon:initial"
-    TAG="ubuntu/bionic:18.04-minbase"
-    TAG2="polygon:initial"
+    SOURCE_TAG="ubuntu/bionic:18.04-minbase"
+    TARGET_TAG="polygon:initial"
 
 elif [[ $# -ne 2 ]]
 then
@@ -24,8 +24,8 @@ then
     echo ""
     echo "Usage: ${0##*/} SOURCE_IMAGE_tag TARGET_IMAGE_tag"
     continue_with_defaults "ubuntu/bionic:18.04-minbase polygon:initial"
-    TAG="ubuntu/bionic:18.04-minbase"
-    TAG2="polygon:initial"
+    SOURCE_TAG="ubuntu/bionic:18.04-minbase"
+    TARGET_TAG="polygon:initial"
 
 else
   if [[ -n "$1" ]]; then

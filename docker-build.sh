@@ -63,6 +63,7 @@ RUN apt update && \
     apt clean
 
 #RUN apt install -y iproute2 && \
+#    apt install -y dnsutils && \
 #    apt install -y scapy && \
 #    apt install -y bash-completion && \
 #    apt install -y nano && \
@@ -101,6 +102,7 @@ RUN apt update && \
 #    apt clean
 
 RUN apt install -y iproute2 && \
+    apt install -y dnsutils && \
     apt install -y sudo && \
     apt install -y tcpdump && \
     apt install -y bash-completion && \

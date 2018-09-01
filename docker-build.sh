@@ -62,13 +62,15 @@ RUN apt update && \
     apt upgrade -y && \
     apt clean
 
-#RUN apt install -y iproute2 && \
+#RUN apt install -y locales && \
+#    apt install -y iproute2 && \
 #    apt install -y dnsutils && \
 #    apt install -y scapy && \
 #    apt install -y bash-completion && \
 #    apt install -y nano && \
 #    apt install -y sudo && \
 #    apt install -y nmap && \
+#    apt install netcat-openbsd && \
 #    apt install -y zlib1g-dev && \
 #    apt install -y libssl-dev && \
 #    apt install -y zip && \
@@ -91,6 +93,7 @@ RUN apt update && \
 #    apt install -y python3-pip && \
 #    apt install -y python3-setuptools && \
 #    apt install -y python3-virtualenv && \
+#    apt install -y python3-bs4
 #    apt install -y python3-numpy && \
 #    apt install -y python3-scipy && \
 #    apt install -y python3-matplotlib && \
@@ -130,8 +133,20 @@ RUN sed -i '\/etc\/bash_completion/s/^#//'  /root/.bashrc && \
 
 RUN sed -i '/PermitRootLogin/cPermitRootLogin no' /etc/ssh/sshd_config
 
-ENTRYPOINT ["/bin/bash"]
-#ENTRYPOINT ["/usr/sbin/sshd", "-D"]
+#ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/usr/sbin/sshd", "-D"]
+
+PATH='/etc/default/locale'
+RUN echo 'LANG="en_US.UTF-8"' > ${PATH} && \
+    echo 'LC_NUMERIC="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_TIME="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_MONETARY="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_PAPER="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_NAME="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_ADDRESS="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_TELEPHONE="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_MEASUREMENT="ru_RU.UTF-8"' >> ${PATH} && \
+    echo 'LC_IDENTIFICATION="ru_RU.UTF-8"' >> ${PATH}
 
 EOF
 

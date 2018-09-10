@@ -123,7 +123,7 @@ if [[ -z "${APT_SECURITY_URI}" ]]; then
 fi
 
 
-echo "Script configured with following values: OS=${OS}, release_codename=${CODENAME}, tag_for_base_image=${TAG}, uri=${URI}, apt_uri=${APT_URI}, apt_security_uri=${APT_SECURITY_URI}, tag_for_derivated_image=${TAG2}, continue?"
+echo "Script configured with following values: OS=${OS}, release_codename=${CODENAME}, tag_for_base_image=${TAG}, uri=${URI}, apt_uri=${APT_URI}, apt_security_uri=${APT_SECURITY_URI}. Continue?"
 select YN in "Yes" "No"; do
       case ${YN} in
         "Yes" ) break;;

@@ -50,6 +50,15 @@ mkdir -p /tmp/docker-build
 
 truncate -s 0 /tmp/docker-build/Dockerfile
 
+
+################
+# DECLARE VARS #
+################
+_LOCALE_='/etc/default/locale'
+_PASSWD_="1"
+_USER_="blackswan"
+_SECRET_="$(echo $(openssl passwd -1 ${_PASSWD_}) | sed 's/\$/\\$/g')"
+
 cat <<EOF > /tmp/docker-build/Dockerfile
 FROM ${SOURCE_TAG}
 
@@ -67,10 +76,11 @@ RUN apt update && \
 #    apt install -y dnsutils && \
 #    apt install -y scapy && \
 #    apt install -y bash-completion && \
+#    apt install -y openssl && \
 #    apt install -y nano && \
 #    apt install -y sudo && \
 #    apt install -y nmap && \
-#    apt install netcat-openbsd && \
+#    apt install -y netcat-openbsd && \
 #    apt install -y zlib1g-dev && \
 #    apt install -y libssl-dev && \
 #    apt install -y zip && \
@@ -93,13 +103,14 @@ RUN apt update && \
 #    apt install -y python3-pip && \
 #    apt install -y python3-setuptools && \
 #    apt install -y python3-virtualenv && \
-#    apt install -y python3-bs4
+#    apt install -y python3-bs4 && \
 #    apt install -y python3-numpy && \
 #    apt install -y python3-scipy && \
 #    apt install -y python3-matplotlib && \
 #    apt install -y python3-pandas && \
 #    apt install -y ipython3 && \
-#    pip3 install --upgrade pip setuptools && \
+#    python3 -m pip install --upgrade pip setuptools && \
+#    python3 -m pip install jupyter && \
 #    apt install -y nginx && \
 #    apt install -y postgresql && \
 #    apt clean
@@ -114,6 +125,7 @@ RUN apt install -y iproute2 && \
     apt install -y curl && \
     apt install -y openssh-server && \
     apt install -y tree && \
+    apt install -y openssl && \
     apt install -y python3-dev && \
     apt install -y python3-yaml && \
     apt install -y python3-pip && \
@@ -123,7 +135,8 @@ RUN apt install -y iproute2 && \
     apt install -y python3-scipy && \
     apt install -y python3-pandas && \
     apt install -y ipython3 && \
-    pip3 install --upgrade pip setuptools && \
+    python3 -m pip install --upgrade pip setuptools && \
+    python3 -m pip install jupyter && \
     apt clean
 
 RUN service ssh start
@@ -132,24 +145,26 @@ RUN sed -i '\/etc\/bash_completion/s/^#//'  /root/.bashrc && \
     sed -i '/\. \/etc\/bash_completion/afi' /root/.bashrc
 
 RUN sed -i '/PermitRootLogin/cPermitRootLogin no' /etc/ssh/sshd_config
+#RUN sed -i '/PermitRootLogin/cPermitRootLogin yes' /etc/ssh/sshd_config
 
 #ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]
 
-PATH='/etc/default/locale'
-RUN echo 'LANG="en_US.UTF-8"' > ${PATH} && \
-    echo 'LC_NUMERIC="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_TIME="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_MONETARY="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_PAPER="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_NAME="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_ADDRESS="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_TELEPHONE="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_MEASUREMENT="ru_RU.UTF-8"' >> ${PATH} && \
-    echo 'LC_IDENTIFICATION="ru_RU.UTF-8"' >> ${PATH}
+RUN useradd -p "${_SECRET_}" -s /bin/bash -m ${_USER_} && \
+    usermod -a -G sudo ${_USER_}
+
+RUN echo 'LANG="en_US.UTF-8"' > ${_LOCALE_} && \
+    echo 'LC_NUMERIC="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_TIME="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_MONETARY="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_PAPER="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_NAME="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_ADDRESS="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_TELEPHONE="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_MEASUREMENT="ru_RU.UTF-8"' >> ${_LOCALE_} && \
+    echo 'LC_IDENTIFICATION="ru_RU.UTF-8"' >> ${_LOCALE_}
 
 EOF
-
 
 docker build --no-cache -f /tmp/docker-build/Dockerfile /tmp --tag "${TARGET_TAG}"
 

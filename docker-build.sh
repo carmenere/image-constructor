@@ -67,10 +67,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 ENV TERM=xterm-256color
 
-RUN apt update && \
-    apt upgrade -y && \
-    apt clean
-
+##########################################################################
+#   Common-base
+##########################################################################
+#RUN apt update && \
+#    apt upgrade -y && \
+#    apt clean
+#
 #RUN apt install -y locales && \
 #    apt install -y iproute2 && \
 #    apt install -y dnsutils && \
@@ -81,88 +84,79 @@ RUN apt update && \
 #    apt install -y sudo && \
 #    apt install -y nmap && \
 #    apt install -y netcat-openbsd && \
-#    apt install -y zlib1g-dev && \
-#    apt install -y libssl-dev && \
 #    apt install -y zip && \
 #    apt install -y unzip && \
 #    apt install -y git && \
-#    apt install -y strace && \
-#    apt install -y ltrace && \
 #    apt install -y curl && \
-#    apt install -y build-essential && \
-#    apt install -y conntrack && \
-#    apt install -y ipset && \
 #    apt install -y tcpdump && \
 #    apt install -y openssh-server && \
-#    apt install -y lshw && \
-#    apt install -y htop && \
-#    apt install -y tshark && \
 #    apt install -y tree && \
-#    apt install -y python3-dev && \
+#    apt clean
+#
+#
+#RUN service ssh start
+#
+#RUN sed -i '\/etc\/bash_completion/s/^#//'  /root/.bashrc && \
+#    sed -i '/\. \/etc\/bash_completion/afi' /root/.bashrc
+#
+#RUN sed -i '/PermitRootLogin/cPermitRootLogin no' /etc/ssh/sshd_config
+#
+#RUN useradd -p "${_SECRET_}" -s /bin/bash -m ${_USER_} && \
+#    usermod -a -G sudo ${_USER_}
+#
+#RUN locale-gen ru_RU.UTF-8 && \
+#    locale-gen en_US.UTF-8 && \
+#    update-locale && \
+#    echo 'LANG="en_US.UTF-8"' > ${_LOCALE_} && \
+#    echo 'LC_TIME="ru_RU.UTF-8"' >> ${_LOCALE_}
+#
+#
+##########################################################################
+#   Scrapper, Backend
+##########################################################################
+#RUN apt install -y python3-dev && \
 #    apt install -y python3-yaml && \
 #    apt install -y python3-pip && \
 #    apt install -y python3-setuptools && \
 #    apt install -y python3-virtualenv && \
-#    apt install -y python3-bs4 && \
+#    python3 -m pip install --upgrade pip setuptools && \
+#    apt clean
+#
+#
+#
+##########################################################################
+#   Frontend
+##########################################################################
+#RUN apt install -y nginx && \
+#    apt clean
+#
+#
+##########################################################################
+#   DB
+##########################################################################
+#RUN apt install -y postgresql && \
+#    apt clean
+#
+#
+##########################################################################
+#   Jupyter
+##########################################################################
+#RUN apt install -y python3-dev && \
+#    apt install -y python3-yaml && \
+#    apt install -y python3-pip && \
+#    apt install -y python3-setuptools && \
+#    apt install -y python3-virtualenv && \
 #    apt install -y python3-numpy && \
 #    apt install -y python3-scipy && \
-#    apt install -y python3-matplotlib && \
 #    apt install -y python3-pandas && \
 #    apt install -y ipython3 && \
 #    python3 -m pip install --upgrade pip setuptools && \
 #    python3 -m pip install jupyter && \
-#    apt install -y nginx && \
-#    apt install -y postgresql && \
 #    apt clean
-
-RUN apt install -y iproute2 && \
-    apt install -y dnsutils && \
-    apt install -y sudo && \
-    apt install -y tcpdump && \
-    apt install -y bash-completion && \
-    apt install -y nano && \
-    apt install -y git && \
-    apt install -y curl && \
-    apt install -y openssh-server && \
-    apt install -y tree && \
-    apt install -y openssl && \
-    apt install -y python3-dev && \
-    apt install -y python3-yaml && \
-    apt install -y python3-pip && \
-    apt install -y python3-setuptools && \
-    apt install -y python3-virtualenv && \
-    apt install -y python3-numpy && \
-    apt install -y python3-scipy && \
-    apt install -y python3-pandas && \
-    apt install -y ipython3 && \
-    python3 -m pip install --upgrade pip setuptools && \
-    python3 -m pip install jupyter && \
-    apt clean
-
-RUN service ssh start
-
-RUN sed -i '\/etc\/bash_completion/s/^#//'  /root/.bashrc && \
-    sed -i '/\. \/etc\/bash_completion/afi' /root/.bashrc
-
-RUN sed -i '/PermitRootLogin/cPermitRootLogin no' /etc/ssh/sshd_config
-#RUN sed -i '/PermitRootLogin/cPermitRootLogin yes' /etc/ssh/sshd_config
+#
 
 #ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]
-
-RUN useradd -p "${_SECRET_}" -s /bin/bash -m ${_USER_} && \
-    usermod -a -G sudo ${_USER_}
-
-RUN echo 'LANG="en_US.UTF-8"' > ${_LOCALE_} && \
-    echo 'LC_NUMERIC="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_TIME="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_MONETARY="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_PAPER="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_NAME="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_ADDRESS="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_TELEPHONE="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_MEASUREMENT="ru_RU.UTF-8"' >> ${_LOCALE_} && \
-    echo 'LC_IDENTIFICATION="ru_RU.UTF-8"' >> ${_LOCALE_}
 
 EOF
 

@@ -14,7 +14,7 @@ EOF1
 cat <<EOF2 > /lib/systemd/system/iptables-restore-DOCKER-USER.service
 [Unit]
 Description=Restore iptables firewall rules
-Before=network-pre.target
+After=docker.service
 
 [Service]
 Type=oneshot

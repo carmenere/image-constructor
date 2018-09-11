@@ -68,36 +68,37 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV TERM=xterm-256color
 
 ##########################################################################
-#   Common-base
+#   Common-image
+#   ./docker-build.sh ubuntu/18.04:minbase ubuntu/18.04:common-image
 ##########################################################################
 #RUN apt update && \
 #    apt upgrade -y && \
 #    apt clean
 #
 #RUN apt install -y locales && \
-#    apt install -y iproute2 && \
-#    apt install -y dnsutils && \
-#    apt install -y scapy && \
-#    apt install -y bash-completion && \
-#    apt install -y openssl && \
+#    apt install -y man && \
+#    apt install -y less && \
 #    apt install -y nano && \
+#    apt install -y tree && \
 #    apt install -y sudo && \
-#    apt install -y nmap && \
-#    apt install -y netcat-openbsd && \
 #    apt install -y zip && \
 #    apt install -y unzip && \
 #    apt install -y git && \
+#    apt install -y bash-completion && \
+#    apt install -y iproute2 && \
+#    apt install -y dnsutils && \
+#    apt install -y scapy && \
+#    apt install -y openssl && \
+#    apt install -y nmap && \
+#    apt install -y netcat-openbsd && \
 #    apt install -y curl && \
 #    apt install -y tcpdump && \
 #    apt install -y openssh-server && \
-#    apt install -y tree && \
+#    apt install -y python3 && \
 #    apt clean
 #
 #
 #RUN service ssh start
-#
-#RUN sed -i '\/etc\/bash_completion/s/^#//'  /root/.bashrc && \
-#    sed -i '/\. \/etc\/bash_completion/afi' /root/.bashrc
 #
 #RUN sed -i '/PermitRootLogin/cPermitRootLogin no' /etc/ssh/sshd_config
 #
@@ -110,9 +111,13 @@ ENV TERM=xterm-256color
 #    echo 'LANG="en_US.UTF-8"' > ${_LOCALE_} && \
 #    echo 'LC_TIME="ru_RU.UTF-8"' >> ${_LOCALE_}
 #
+#RUN sed -i '\/etc\/bash_completion/s/^#//'  /root/.bashrc && \
+#    sed -i '/\. \/etc\/bash_completion/afi' /root/.bashrc
+#
 #
 ##########################################################################
-#   Scrapper, Backend
+#   Backend
+#   ./docker-build.sh ubuntu/18.04:common-image backend:v0.1
 ##########################################################################
 #RUN apt install -y python3-dev && \
 #    apt install -y python3-yaml && \
@@ -123,9 +128,36 @@ ENV TERM=xterm-256color
 #    apt clean
 #
 #
+##########################################################################
+#   Scrapper
+#   ./docker-build.sh backend:v0.1 gas:v0.1
+##########################################################################
+#RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
+#    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
+#    apt update && \
+#    apt install google-chrome-stable && \
+#    apt clean && \
+#    python3 -m pip install selenium && \
+#    wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip  && \
+#    unzip chromedriver_linux64.zip  && \
+#    mv chromedriver /usr/bin/chromedriver && \
+#    chown root:root /usr/bin/chromedriver && \
+#    chmod +x /usr/bin/chromedriver
+#
+#Usage:
+#from selenium import webdriver
+#from selenium.webdriver.chrome.options import Options
+#
+#options = Options()
+#options.add_argument('--headless')
+#options.add_argument('--disable-gpu')
+#options.add_argument('--no-sandbox')
+#driver = webdriver.Chrome(chrome_options=options)
+#
 #
 ##########################################################################
 #   Frontend
+#   ./docker-build.sh ubuntu/18.04:common-image frontend:v0.1
 ##########################################################################
 #RUN apt install -y nginx && \
 #    apt clean
@@ -133,6 +165,7 @@ ENV TERM=xterm-256color
 #
 ##########################################################################
 #   DB
+#   ./docker-build.sh ubuntu/18.04:common-image database:v0.1
 ##########################################################################
 #RUN apt install -y postgresql && \
 #    apt clean
@@ -140,20 +173,16 @@ ENV TERM=xterm-256color
 #
 ##########################################################################
 #   Jupyter
+#   ./docker-build.sh backend:v0.1 gas:v0.1
 ##########################################################################
-#RUN apt install -y python3-dev && \
-#    apt install -y python3-yaml && \
-#    apt install -y python3-pip && \
-#    apt install -y python3-setuptools && \
-#    apt install -y python3-virtualenv && \
-#    apt install -y python3-numpy && \
+#RUN apt install -y python3-numpy && \
 #    apt install -y python3-scipy && \
 #    apt install -y python3-pandas && \
 #    apt install -y ipython3 && \
-#    python3 -m pip install --upgrade pip setuptools && \
 #    python3 -m pip install jupyter && \
 #    apt clean
 #
+
 
 #ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]

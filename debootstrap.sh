@@ -147,7 +147,7 @@ then
 fi
 
 
-debootstrap --arch=amd64 --variant=minbase ${CODENAME} /tmp/${OS}/${CODENAME} ${URI}
+debootstrap --arch=amd64 --variant=minbase --exclude=python,gcc-8-base ${CODENAME} /tmp/${OS}/${CODENAME} ${URI}
 #debootstrap --arch=amd64 --variant=minbase --include=bash-completion,nano,sudo,nmap,zlib1g-dev,libssl-dev,zip,unzip,git,strace,ltrace,curl,build-essential,conntrack,ipset,tcpdump,openssh-server ${CODENAME} /tmp/${OS}/${CODENAME} ${URI}
 
 

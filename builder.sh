@@ -14,30 +14,30 @@ then
     echo "ERROR: No arguments supplied!"
     echo ""
     echo "Usage: ${0##*/} SOURCE_IMAGE_tag TARGET_IMAGE_tag"
-    continue_with_defaults "ubuntu/bionic:18.04-minbase polygon:initial"
-    SOURCE_TAG="ubuntu/bionic:18.04-minbase"
-    TARGET_TAG="polygon:initial"
+    continue_with_defaults "ubuntu/bionic-minbase:18.04 ubuntu/bionic-common:18.04"
+    SOURCE_TAG="ubuntu/bionic-minbase:18.04"
+    TARGET_TAG="ubuntu/bionic-common:18.04"
 
 elif [[ $# -ne 2 ]]
 then
     echo "ERROR: Incorrect arguments value supplied!"
     echo ""
     echo "Usage: ${0##*/} SOURCE_IMAGE_tag TARGET_IMAGE_tag"
-    continue_with_defaults "ubuntu/bionic:18.04-minbase polygon:initial"
-    SOURCE_TAG="ubuntu/bionic:18.04-minbase"
-    TARGET_TAG="polygon:initial"
+    continue_with_defaults "ubuntu/bionic-minbase:18.04 ubuntu/bionic-common:18.04"
+    SOURCE_TAG="ubuntu/bionic-minbase:18.04"
+    TARGET_TAG="ubuntu/bionic-common:18.04"
 
 else
   if [[ -n "$1" ]]; then
       SOURCE_TAG=$1
   else
-      SOURCE_TAG="ubuntu/bionic:18.04-minbase"
+      SOURCE_TAG="ubuntu/bionic-minbase:18.04"
   fi
 
   if [[ -n "$2" ]]; then
       TARGET_TAG=$2
   else
-      TARGET_TAG="polygon:initial"
+      TARGET_TAG="ubuntu/bionic-common:18.04"
   fi
 fi
 
@@ -69,7 +69,7 @@ ENV TERM=xterm-256color
 
 ##########################################################################
 #   Common-image
-#   ./docker-build.sh ubuntu/18.04:minbase ubuntu/18.04:common-image
+#   ./builder.sh ubuntu/bionic-minbase:18.04 ubuntu/bionic-common:18.04
 ##########################################################################
 #RUN apt update && \
 #    apt upgrade -y && \
@@ -84,6 +84,7 @@ ENV TERM=xterm-256color
 #    apt install -y zip && \
 #    apt install -y unzip && \
 #    apt install -y git && \
+#    apt install -y iputils-ping && \
 #    apt install -y bash-completion && \
 #    apt install -y iproute2 && \
 #    apt install -y dnsutils && \
@@ -117,7 +118,7 @@ ENV TERM=xterm-256color
 #
 ##########################################################################
 #   Backend
-#   ./docker-build.sh ubuntu/18.04:common-image backend:v0.1
+#   ./builder.sh ubuntu/bionic-common:18.04 py3dev:v0.1
 ##########################################################################
 #RUN apt install -y python3-dev && \
 #    apt install -y python3-yaml && \
@@ -127,10 +128,15 @@ ENV TERM=xterm-256color
 #    python3 -m pip install --upgrade pip setuptools && \
 #    apt clean
 #
+#RUN apt install -y python3-numpy && \
+#    apt install -y python3-scipy && \
+#    apt install -y python3-pandas && \
+#    apt install -y ipython3 && \
+#    apt clean
 #
 ##########################################################################
 #   Scrapper
-#   ./docker-build.sh backend:v0.1 gas:v0.1
+#   ./builder.sh backend:v0.1 gas:v0.1
 ##########################################################################
 #RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
 #    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
@@ -157,7 +163,7 @@ ENV TERM=xterm-256color
 #
 ##########################################################################
 #   Frontend
-#   ./docker-build.sh ubuntu/18.04:common-image frontend:v0.1
+#   ./builder.sh ubuntu/bionic-common:18.04 frontend:v0.1
 ##########################################################################
 #RUN apt install -y nginx && \
 #    apt clean
@@ -165,7 +171,7 @@ ENV TERM=xterm-256color
 #
 ##########################################################################
 #   DB
-#   ./docker-build.sh ubuntu/18.04:common-image database:v0.1
+#   ./builder.sh ubuntu/bionic-common:18.04 database:v0.1
 ##########################################################################
 #RUN apt install -y postgresql && \
 #    apt clean
@@ -173,16 +179,20 @@ ENV TERM=xterm-256color
 #
 ##########################################################################
 #   Jupyter
-#   ./docker-build.sh backend:v0.1 gas:v0.1
+#   ./builder.sh py3dev:v0.1 jupyter:v0.1 
 ##########################################################################
-#RUN apt install -y python3-numpy && \
-#    apt install -y python3-scipy && \
-#    apt install -y python3-pandas && \
-#    apt install -y ipython3 && \
-#    python3 -m pip install jupyter && \
-#    apt clean
+RUN python3 -m pip install jupyter
 #
 #
+
+
+#ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/usr/sbin/sshd", "-D"]
+
+EOF
+
+
+
 #mkdir -p /var/docker/volumes
 #mkdir /var/docker/volumes/PostgreSQL
 #mkdir /var/docker/volumes/Front
@@ -192,20 +202,17 @@ ENV TERM=xterm-256color
 #
 #
 #docker network create --subnet=172.18.0.0/24 gw
-#docker run --restart=unless-stopped --net=gw --ip=172.18.0.2 --hostname=polygon.gw                                            --name=Polygon    -d polygon
-#docker run --restart=unless-stopped --net=gw --ip=172.18.0.3 --hostname=postgres.gw -v /var/docker/volumes/PostgreSQL:/HostFS --name=PostgreSQL -d postgres:v0.1
-#docker run --restart=unless-stopped --net=gw --ip=172.18.0.4 --hostname=jupyter.gw  -v /var/docker/volumes/Jupyter:/HostFS    --name=Jupyter    -d jupyter:v0.1
-#docker run --restart=unless-stopped --net=gw --ip=172.18.0.5 --hostname=backend.gw  -v /var/docker/volumes/Back:/HostFS       --name=Back       -d backend:v0.1
-#docker run --restart=unless-stopped --net=gw --ip=172.18.0.6 --hostname=scraper.gw  -v /var/docker/volumes/GAS:/HostFS        --name=Scraper    -d scraper:v0.1
-#docker run --restart=unless-stopped --net=gw --ip=172.18.0.7 --hostname=frontend.gw -v /var/docker/volumes/Front:/HostFS      --name=Front      -d frontend:v0.1
+#docker run --restart=unless-stopped --net=gw --ip=172.18.0.2 --hostname=polygon                                            --name=Polygon    -d polygon
+#docker run --restart=unless-stopped --net=gw --ip=172.18.0.3 --hostname=postgres -v /var/docker/volumes/PostgreSQL:/HostFS --name=PostgreSQL -d postgres:v0.1
+#docker run --restart=unless-stopped --net=gw --ip=172.18.0.4 --hostname=jupyter  -v /var/docker/volumes/Jupyter:/HostFS    --name=Jupyter    -d jupyter:v0.1
+#docker run --restart=unless-stopped --net=gw --ip=172.18.0.5 --hostname=backend  -v /var/docker/volumes/Back:/HostFS       --name=Back       -d backend:v0.1
+#docker run --restart=unless-stopped --net=gw --ip=172.18.0.6 --hostname=scraper  -v /var/docker/volumes/GAS:/HostFS        --name=Scraper    -d scraper:v0.1
+#docker run --restart=unless-stopped --net=gw --ip=172.18.0.7 --hostname=frontend -v /var/docker/volumes/Front:/HostFS      --name=Front      -d frontend:v0.1
 #
 #
 
 
-#ENTRYPOINT ["/bin/bash"]
-ENTRYPOINT ["/usr/sbin/sshd", "-D"]
 
-EOF
 
 docker build --no-cache -f /tmp/docker-build/Dockerfile /tmp --tag "${TARGET_TAG}"
 

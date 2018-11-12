@@ -5,6 +5,7 @@ cat <<EOF1 > /etc/iptables-restore-DOCKER-USER.conf
 *filter
 :DOCKER-USER - [0:0]
 -I DOCKER-USER -s 192.168.88.0/24 -p tcp -m multiport --dports 22,80,443,8080,8888 -j ACCEPT
+-I DOCKER-USER -s 192.168.25.0/24 -p tcp -m multiport --dports 22,80,443,8080,8888 -j ACCEPT
 -A DOCKER-USER -j RETURN
 COMMIT
 # Completed on Fri Aug 10 13:04:02 2018

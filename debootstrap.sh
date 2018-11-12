@@ -48,24 +48,19 @@ if [[ $# -eq 0 ]]
 then
     echo "ERROR: No arguments supplied!"
     echo ""
-    echo "Usage: ${0##*/} OS release_codename base_image_tag"
-    continue_with_defaults "OS=ubuntu, release_codename=bionic, tag=ubuntu/bionic:18.04"
+    echo "Usage: ${0##*/} OS release_codename image_tag"
+    continue_with_defaults "OS=ubuntu, release_codename=bionic, tag=ubuntu-18.04:minbase"
     OS="ubuntu"
     CODENAME="bionic"
-    TAG="ubuntu/bionic:18.04"
+    TAG="ubuntu-18.04:minbase"
     URI="http://archive.ubuntu.com/ubuntu/"
     APT_URI="http://ru.archive.ubuntu.com/ubuntu/"
 elif [[ $# -ne 3 ]]
 then
     echo "ERROR: Incorrect arguments value supplied!"
     echo ""
-    echo "Usage: ${0##*/} OS release_codename base_image_tag"
-    continue_with_defaults "OS=ubuntu, release_codename=bionic, tag=ubuntu/bionic:18.04"
-    OS="ubuntu"
-    CODENAME="bionic"
-    TAG="ubuntu/bionic:18.04"
-    URI="http://archive.ubuntu.com/ubuntu/"
-    APT_URI="http://ru.archive.ubuntu.com/ubuntu/"
+    echo "Usage: ${0##*/} OS release_codename image_tag"
+    exit
 else
   case ${1^^} in
     #Ubuntu
@@ -113,7 +108,7 @@ else
   if [[ -n "$3" ]]; then
       TAG=$3
   else
-      TAG="ubuntu/bionic:18.04"
+      TAG="ubuntu-18.04:minbase"
   fi
 
 fi
@@ -123,7 +118,7 @@ if [[ -z "${APT_SECURITY_URI}" ]]; then
 fi
 
 
-echo "Script configured with following values: OS=${OS}, release_codename=${CODENAME}, tag_for_base_image=${TAG}, uri=${URI}, apt_uri=${APT_URI}, apt_security_uri=${APT_SECURITY_URI}. Continue?"
+echo "Script configured with following values: OS=${OS}, release_codename=${CODENAME}, image_tag=${TAG}, uri=${URI}, apt_uri=${APT_URI}, apt_security_uri=${APT_SECURITY_URI}. Continue?"
 select YN in "Yes" "No"; do
       case ${YN} in
         "Yes" ) break;;
@@ -147,7 +142,15 @@ then
 fi
 
 
-debootstrap --arch=amd64 --variant=minbase ${CODENAME} /tmp/${OS}/${CODENAME} ${URI}
+echo "Would you like to create minimal image ('debootstrap --variant=minbase ...') or not?"
+select YN in "Yes" "No"; do
+      case ${YN} in
+        "Yes" ) MINBASE="--variant=minbase"; break;;
+        "No" )  MINBASE=""; break;;
+      esac
+done
+
+debootstrap --arch=amd64 ${MINBASE} ${CODENAME} /tmp/${OS}/${CODENAME} ${URI}
 #debootstrap --arch=amd64 --variant=minbase --include=bash-completion,nano,sudo,nmap,zlib1g-dev,libssl-dev,zip,unzip,git,strace,ltrace,curl,build-essential,conntrack,ipset,tcpdump,openssh-server ${CODENAME} /tmp/${OS}/${CODENAME} ${URI}
 
 
